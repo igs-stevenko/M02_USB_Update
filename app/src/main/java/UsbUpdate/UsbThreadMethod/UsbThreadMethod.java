@@ -124,6 +124,7 @@ public class UsbThreadMethod {
         }
     }
 
+
     public void USB_Update(){
 
         int rtn = 0;

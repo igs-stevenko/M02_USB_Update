@@ -3,9 +3,11 @@ package com.igs.usb_update;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import EnvVar.EnvVar;
 import OTAUpdate.BroadCast.BroadCastReceiver;
 import Threads.ProgressThread;
 import Threads.TextUpdateThread;
@@ -26,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
         VersionText = (TextView) findViewById(R.id.VersionView);
 
         BroadCastReceiver.RegisterBroadcastReciver(this);
-
     }
 
 
@@ -52,4 +53,6 @@ public class MainActivity extends AppCompatActivity {
         new TextUpdateThread(this).Start();
 
     }
+
+    static String TAGS = "## [KO] MainActivity";
 }

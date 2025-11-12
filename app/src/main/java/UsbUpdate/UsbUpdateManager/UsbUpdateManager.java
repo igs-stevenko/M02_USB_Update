@@ -3,8 +3,6 @@ package UsbUpdate.UsbUpdateManager;
 import android.content.Context;
 import android.util.Log;
 
-import java.io.IOException;
-
 import EnvVar.EnvVar;
 import UpdateControl.UpdateMethod;
 import UsbUpdate.UsbUpdateStatusCtrl.UsbUpdateStatusCtrl;
@@ -25,6 +23,10 @@ public class UsbUpdateManager {
 
         UsbVar.UpdateStatus = UsbVarDefine.START;
         FileControl.RemoveFolder(EnvVar.TMP_PATH);
+        /* 清除OTA的狀態，只要有進入FOTA，都將OTA的檔案刪除 */
+        FileControl.RemoveFile(EnvVar.OTA_STATUS_FILE);
+        FileControl.RemoveFolder(EnvVar.DOWNLOAD_PATH);
+
     }
 
     public void USB_Update_Finish() {
@@ -51,6 +53,22 @@ public class UsbUpdateManager {
         UsbUpdateStatusCtrl.UsbUpdate_FileRemove();
     }
 
+    int IsSameProject(){
+        int rtn = 0;
+
+        String ProjectName = FileControl.ReadStringFromFile(EnvVar.USB_INFO_PROJNAME_FILE_PATH);
+        Log.d(TAGS, "Target ProjectName = " + ProjectName);
+        if(ProjectName.equals(EnvVar.PROJECT_NAME)){
+            Log.d(TAGS, "Same ProjectName");
+            return 0;
+        }
+        else{
+            Log.d(TAGS, "Defernet ProjectName");
+            return -1;
+        }
+    }
+
+
     public int USB_Update(){
         try {
             int rtn = 0;
@@ -58,6 +76,7 @@ public class UsbUpdateManager {
             boolean IsSystemSameVer = false;
 
             Log.d(TAGS, "UpdateThread Start");
+
 
 
             if(UsbUpdateStatusCtrl.UsbUpdate_FileExist() != true){
@@ -76,6 +95,11 @@ public class UsbUpdateManager {
                 return UsbVarDefine.UPDATE_STATUS_FILECREATE_FAILED;
             }
 
+            /* 判斷更新包與當前系統是否為相同專案 */
+            rtn = IsSameProject();
+            if(rtn < 0) {
+                return UsbVarDefine.DEFERENT_PROJECT_NAME;
+            }
 
             /* 取得Game更新包的Size */
             UsbVar.UpdateFileSize = FileControl.GetFileSize( EnvVar.USB_ENC_GAME_FILE_PATH);

@@ -48,12 +48,19 @@ public class FirstStartActivity extends AppCompatActivity {
     private List<AppDetail> apps = null;
     private ListView list;
     private PackageManager manager;
+    public native String GeySysInfo();
+
+    static {
+        System.loadLibrary("usb_update");
+    }
 
     private void init(){
 
         mApkControl = new ApkControl(this);
         BroadCastReceiver.RegisterBroadcastReciver(this);
         Log.d(TAGS, "init : ");
+        EnvVar.PROJECT_NAME = GeySysInfo();
+        Log.d(TAGS, "[init] : SYSTEM PROJECT_NAME = " + EnvVar.PROJECT_NAME);
     }
 
     @Override

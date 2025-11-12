@@ -21,5 +21,6 @@ public class UsbVarDefine {
     public final static int UPDATESYSTEM_FAILED = -7;
     public final static int UNKNOW_FAILED = -8;
     public final static int UPDATE_STATUS_FILECREATE_FAILED = -9;
+    public final static int DEFERENT_PROJECT_NAME = -10;
 
 }

@@ -26,10 +26,12 @@ public class EnvVar {
     public static final String Key = "f2a8b0e7c9d34105";
     public static final String Iv = "7f3e9d0a1b5c8e2f";
 
+    public static final String PROJNAME_FILE = "proj_name.txt";
     public static String PRODUCT_TYPE = "";
     public static String GAME_PACKAGE_NAME;
     public static String USB_ENC_GAME_FILE_PATH;
     public static String USB_INFO_GAME_FILE_PATH;
+    public static String USB_INFO_PROJNAME_FILE_PATH;
 
     public static String USB_ENC_SYSTEM_FILE_PATH;
     public static String USB_INFO_SYSTEM_FILE_PATH;
@@ -40,6 +42,8 @@ public class EnvVar {
     public static int UpdateConfig = 0;
     public static final int UPDATE_FROM_USB = 1;
     public static final int UPDATE_FROM_OTA = 2;
+
+    public static String PROJECT_NAME = "";
 
 
 
