@@ -29,7 +29,7 @@ android {
         //删除存在的
         delete 'build/libs/OTALib.jar'
         //设置拷贝的文件
-        from('build/intermediates/aar_main_jar/debug/')
+        from('build/intermediates/aar_main_jar/debug/syncDebugLibJars')
         //打进jar包后的文件目录
         into('build/libs/')
         //将classes.jar放入build/libs/目录下

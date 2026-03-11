@@ -77,6 +77,8 @@ public class OTAUpdateManager {
             if (rtn < 0) {
                 return OTAVarDefine.CHECKFILE_FAILED;
             }
+            /* 刪除檔案之前，先新增一個狀態檔，代表有進入更新狀態過 */
+
 
             /* 解壓縮前先刪除該刪的檔案 */
             Log.d(TAGS, "Remove Start");
