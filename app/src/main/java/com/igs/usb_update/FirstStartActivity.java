@@ -74,7 +74,7 @@ public class FirstStartActivity extends AppCompatActivity {
         /* 初始化 */
         init();
         android.os.Process.setThreadPriority(android.os.Process.myPid(), -19);
-        Log.d(TAGS, "USB_Update : V7");
+        Log.d(TAGS, "USB_Update : V9");
     }
 
     @Override
@@ -159,6 +159,26 @@ public class FirstStartActivity extends AppCompatActivity {
 
     private void StartGame(){
         Log.d(TAGS, "Start Game");
+
+        String otaEnabled = SystemProperties.get("ro.ota.enabled", "false");
+        Log.d(TAGS, "ro.ota.enabled = " + otaEnabled);
+
+        if (otaEnabled.equals("true")) {
+            Log.d(TAGS, "OTA enabled, launching com.ota_service");
+            PackageManager manager = this.getPackageManager();
+            Intent it = manager.getLaunchIntentForPackage("igs.rd3.ota_service");
+            if (it != null) {
+                this.startActivity(it);
+            } else {
+                Log.e(TAGS, "igs.rd3.ota_service not found, fallback to game");
+                launchGame();
+            }
+        } else {
+            launchGame();
+        }
+    }
+
+    private void launchGame(){
         PackageManager manager = this.getPackageManager();
         Intent it = manager.getLaunchIntentForPackage(EnvVar.GAME_PACKAGE_NAME);
         while(mApkControl.isAppInstalled(EnvVar.GAME_PACKAGE_NAME) == false){
