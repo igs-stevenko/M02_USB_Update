@@ -139,7 +139,7 @@ public class UsbThreadMethod {
             mUsbUpdateManager.USB_Update_SAMEVERSION();
         } else {
             mUsbUpdateManager.USB_Update_Finish();
-            rebootDevice();
+            //rebootDevice();
         }
     }
 

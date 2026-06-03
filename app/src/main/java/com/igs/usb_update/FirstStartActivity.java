@@ -74,7 +74,7 @@ public class FirstStartActivity extends AppCompatActivity {
         /* 初始化 */
         init();
         android.os.Process.setThreadPriority(android.os.Process.myPid(), -19);
-        Log.d(TAGS, "USB_Update : V9");
+        Log.d(TAGS, "USB_Update : V10");
     }
 
     @Override
@@ -163,8 +163,19 @@ public class FirstStartActivity extends AppCompatActivity {
         String otaEnabled = SystemProperties.get("ro.ota.enabled", "false");
         Log.d(TAGS, "ro.ota.enabled = " + otaEnabled);
 
+        EnvVar.PRODUCT_TYPE = SystemProperties.get("ro.project.env");
+
         if (otaEnabled.equals("true")) {
+
             Log.d(TAGS, "OTA enabled, launching com.ota_service");
+
+            /* 如果是產品碟，就要等遊戲裝好才呼叫OTA Service */
+            if (EnvVar.PRODUCT_TYPE.equals("REL")) {
+                while(mApkControl.isAppInstalled(EnvVar.GAME_PACKAGE_NAME) == false){
+                    Sleep(16);
+                }
+            }
+
             PackageManager manager = this.getPackageManager();
             Intent it = manager.getLaunchIntentForPackage("igs.rd3.ota_service");
             if (it != null) {
@@ -173,6 +184,7 @@ public class FirstStartActivity extends AppCompatActivity {
                 Log.e(TAGS, "igs.rd3.ota_service not found, fallback to game");
                 launchGame();
             }
+
         } else {
             launchGame();
         }
