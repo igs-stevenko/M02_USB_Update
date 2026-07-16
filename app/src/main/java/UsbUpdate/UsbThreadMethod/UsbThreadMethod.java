@@ -39,6 +39,8 @@ public class UsbThreadMethod {
                 if (UsbVar.UpdateStatus == UsbVarDefine.UPDATEFINISH) {
                     Sleep(2000);
                     ViewCtrl.SetupTitleTextView("Update Finish");
+                    ViewCtrl.SetupPromptTextView("Please unplug the USB drive and reboot now.");
+                    continue;
                 } else if (UsbVar.UpdateStatus == UsbVarDefine.SAMEVERSION) {
                     ViewCtrl.SetupTitleTextView("Same version.");
                     ViewCtrl.SetupPromptTextView("Please make sure USB drive is unplugged, then reboot the machine again.");
