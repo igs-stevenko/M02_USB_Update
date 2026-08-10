@@ -133,22 +133,42 @@ public class UsbUpdateManager {
             FileControl.RemoveFile(EnvVar.TMP_APK_PATH);
             FileControl.RemoveFile(EnvVar.TMP_README_PATH);
 
-            /* 解密遊戲&系統更新包 */
+            /* 解密遊戲更新包 */
             UsbVar.UpdateStatus = UsbVarDefine.DECRYPTFILE;
-
             Log.d(TAGS, "DecryptFile Start");
             rtn = mUsbUpdateMethod.DecryptFile(EnvVar.TMP_PATH + EnvVar.ENC_GAME_FILE, EnvVar.TMP_PATH + EnvVar.DEC_GAME_FILE);
             if(rtn < 0) {
                 return UsbVarDefine.DECRYPTFILE_FAILED;
             }
 
+            /* 計算遊戲明文zip檔案的md5 */
+            String calcMd5 = mUsbUpdateMethod.calcFileMd5(EnvVar.TMP_PATH + EnvVar.DEC_GAME_FILE);
+            if (calcMd5 == null) {
+                Log.e(TAGS, "Failed to calculate MD5 of decrypted file");
+                return UsbVarDefine.DECRYPTFILE_FAILED;
+            }
+            /* 讀取PF檔 */
+            String expectedMd5 = mUsbUpdateMethod.readExpectedMd5(EnvVar.TMP_PATH + EnvVar.PF_FILE);
+            if (expectedMd5 == null) {
+                Log.e(TAGS, "Failed to read expected MD5 from PF.txt");
+                return UsbVarDefine.DECRYPTFILE_FAILED;
+            }
+            /* 比對兩個內容是否相同 */
+            Log.d(TAGS, "Calculated MD5: " + calcMd5);
+            Log.d(TAGS, "Expected MD5:   " + expectedMd5);
+
+            if (!calcMd5.equalsIgnoreCase(expectedMd5)) {
+                Log.e(TAGS, "MD5 mismatch! Decryption verification failed.");
+                return UsbVarDefine.DECRYPTFILE_FAILED;
+            }
+
+            /* 解密系統更新包 */
             rtn = mUsbUpdateMethod.DecryptFile(EnvVar.TMP_PATH + EnvVar.ENC_SYSTEM_FILE, EnvVar.TMP_PATH + EnvVar.DEC_SYSTEM_FILE);
             if(rtn < 0) {
                 return UsbVarDefine.DECRYPTFILE_FAILED;
             }
 
             /* 解壓縮遊戲&系統更新包 */
-
             UsbVar.UpdateStatus = UsbVarDefine.UNZIPFILE;
 
             Log.d(TAGS, "UnzipFileWithoutFristName Start");
@@ -228,6 +248,14 @@ public class UsbUpdateManager {
         targetFile = EnvVar.TMP_PATH + EnvVar.INFO_SYSTEM_FILE;
 
         rtn = FileControl.CopyFile(sourceFile, targetFile);
+
+        sourceFile = EnvVar.USB_INFO_PF_FILE_PATH;
+        targetFile = EnvVar.TMP_PATH + EnvVar.PF_FILE;
+
+        rtn = FileControl.CopyFile(sourceFile, targetFile);
+        if(rtn < 0){
+            return rtn;
+        }
 
         return rtn;
     }

@@ -4,11 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import EnvVar.EnvVar;
 import model.FileControl.FileControl;
@@ -72,15 +68,7 @@ public class UpdateMethod {
 
         int rtn = 0;
 
-        String key = EnvVar.getKey();
-        String iv = EnvVar.getIv();
-        if (key == null || iv == null) {
-            Log.d(TAGS, "AES key or IV not available, cannot decrypt");
-            return -1;
-        }
-        Log.d(TAGS, "AES Key: " + key);
-        Log.d(TAGS, "AES IV: " + iv);
-        rtn = Crypto.decryptAESCBCFile(Source, Target, key, iv);
+        rtn = Crypto.decryptAESCBCFile(Source, Target, EnvVar.Key, EnvVar.Iv);
 
         return rtn;
 
@@ -116,6 +104,15 @@ public class UpdateMethod {
         int rtn = 0;
 
         Sleep(1000);
+
+        /*
+        rtn = mApkControl.uninstall_app(InstallPkgName);
+        if(rtn != 0){
+            return -3;
+        }
+
+        Sleep(1000);
+        */
 
         rtn = mApkControl.install_app(InstallPkgName, Source);
         if(rtn != 0){
@@ -172,48 +169,6 @@ public class UpdateMethod {
         }
         else{
             return false;
-        }
-    }
-
-    public String calcFileMd5(String filePath) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            try (FileInputStream fis = new FileInputStream(filePath)) {
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = fis.read(buffer)) != -1) {
-                    md.update(buffer, 0, bytesRead);
-                }
-            }
-            byte[] digest = md.digest();
-            StringBuilder sb = new StringBuilder();
-            for (byte b : digest) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException | IOException e) {
-            Log.e(TAGS, "calcFileMd5 error", e);
-            return null;
-        }
-    }
-
-    public String readExpectedMd5(String filePath) {
-        File file = new File(filePath);
-        if (!file.exists() || !file.canRead()) {
-            return null;
-        }
-        try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] data = new byte[(int) file.length()];
-            fis.read(data);
-            String content = new String(data, "UTF-8").trim();
-            // 支援 md5sum 格式 "hash  filename"，只取前 32 字元
-            if (content.length() >= 32) {
-                return content.substring(0, 32);
-            }
-            return content;
-        } catch (IOException e) {
-            Log.e(TAGS, "readExpectedMd5 error", e);
-            return null;
         }
     }
 

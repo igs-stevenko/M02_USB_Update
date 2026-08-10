@@ -1,5 +1,8 @@
 package EnvVar;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class EnvVar {
 
     public static final String INFO_GAME_FILE = "info.txt";
@@ -23,15 +26,55 @@ public class EnvVar {
     public static final String OTA_DOWNLOAD_FILE_INFO_MD5 = "/data/media/fileinfo_md5.txt";
     public static final String USB_StatusFilePath = "/data/media/FOTA_Update.bin";
 
-    public static final String Key = "f2a8b0e7c9d34105";
-    public static final String Iv = "7f3e9d0a1b5c8e2f";
+
+    private static final String AES_KEY_FILE = "/system/bin/aes_key.bin";
+    private static String Key = null;
+    private static String Iv = null;
+    private static boolean keyLoaded = false;
+
+    public static synchronized String getKey() {
+        if (!keyLoaded) {
+            loadKeyFromFile();
+        }
+        return Key;
+    }
+
+    public static synchronized String getIv() {
+        if (!keyLoaded) {
+            loadKeyFromFile();
+        }
+        return Iv;
+    }
+
+    private static void loadKeyFromFile() {
+        keyLoaded = true;
+        java.io.File file = new java.io.File(AES_KEY_FILE);
+        if (!file.exists() || !file.canRead()) {
+            android.util.Log.e("GlobalVar", "AES key file not found or not readable: " + AES_KEY_FILE);
+            return;
+        }
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] data = new byte[32];
+            int bytesRead = fis.read(data);
+            if (bytesRead >= 32) {
+                Key = new String(data, 0, 16, "UTF-8");
+                Iv = new String(data, 16, 16, "UTF-8");
+            } else {
+                android.util.Log.e("GlobalVar", "AES key file too short: " + bytesRead + " bytes");
+            }
+        } catch (IOException e) {
+            android.util.Log.e("GlobalVar", "Failed to read AES key file", e);
+        }
+    }
 
     public static final String PROJNAME_FILE = "proj_name.txt";
+    public static final String PF_FILE = "PF.txt";
     public static String PRODUCT_TYPE = "";
     public static String GAME_PACKAGE_NAME;
     public static String USB_ENC_GAME_FILE_PATH;
     public static String USB_INFO_GAME_FILE_PATH;
     public static String USB_INFO_PROJNAME_FILE_PATH;
+    public static String USB_INFO_PF_FILE_PATH;
 
     public static String USB_ENC_SYSTEM_FILE_PATH;
     public static String USB_INFO_SYSTEM_FILE_PATH;

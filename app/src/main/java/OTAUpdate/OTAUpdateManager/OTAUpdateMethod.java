@@ -115,7 +115,15 @@ public class OTAUpdateMethod {
 
         int rtn = 0;
 
-        rtn = Crypto.decryptAESCBCFile(Source, Target, EnvVar.Key, EnvVar.Iv);
+        String key = EnvVar.getKey();
+        String iv = EnvVar.getIv();
+        if (key == null || iv == null) {
+            Log.d(TAGS, "AES key or IV not available, cannot decrypt");
+            return -1;
+        }
+        Log.d(TAGS, "AES Key: " + key);
+        Log.d(TAGS, "AES IV: " + iv);
+        rtn = Crypto.decryptAESCBCFile(Source, Target, key, iv);
 
         return rtn;
 

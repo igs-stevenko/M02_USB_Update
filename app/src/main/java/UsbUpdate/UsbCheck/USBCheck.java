@@ -17,7 +17,9 @@ public class USBCheck {
         EnvVar.USB_INFO_PROJNAME_FILE_PATH = FindFileInUSB(EnvVar.PROJNAME_FILE);
         Log.d(TAGS, "USB_INFO_PROJNAME_FILE_PATH = " + EnvVar.USB_INFO_PROJNAME_FILE_PATH);
 
-
+        /*檢查PF檔案在不在*/
+        EnvVar.USB_INFO_PF_FILE_PATH = FindFileInUSB(EnvVar.PF_FILE);
+        Log.d(TAGS, "USB_INFO_PF_FILE_PATH = " + EnvVar.USB_INFO_PF_FILE_PATH);
 
         EnvVar.USB_ENC_GAME_FILE_PATH = FindFileInUSB(EnvVar.ENC_GAME_FILE);
         EnvVar.USB_INFO_GAME_FILE_PATH = FindFileInUSB(EnvVar.INFO_GAME_FILE);

@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         init();
 
-        VersionText.setText("V2.1");
+        VersionText.setText("V3.0");
 
         ViewCtrl.ProgressShow();
         new UpdateThread(this).Start();
